@@ -1,0 +1,5 @@
+rootProject.name = "banking-system"
+
+includeBuild("backend/account-service")
+includeBuild("backend/customer-service")
+includeBuild("backend/contracts")

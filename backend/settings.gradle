@@ -1,0 +1,5 @@
+rootProject.name = 'banking-microservices'
+
+includeBuild('contracts')
+includeBuild('customer-service')
+includeBuild('account-service')
