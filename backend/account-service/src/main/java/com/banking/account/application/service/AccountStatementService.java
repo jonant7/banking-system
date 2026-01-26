@@ -44,10 +44,6 @@ public class AccountStatementService implements GenerateAccountStatementUseCase 
             throw new IllegalArgumentException("Start date must be before end date");
         }
 
-        if (endDate.isAfter(LocalDateTime.now())) {
-            throw new IllegalArgumentException("End date cannot be in the future");
-        }
-
         if (!customerEventListener.customerExists(customerId)) {
             throw new IllegalStateException(
                     String.format("Customer %s does not exist", customerId)

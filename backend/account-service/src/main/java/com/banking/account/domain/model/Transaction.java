@@ -23,6 +23,7 @@ public class Transaction {
     private String reference;
     private UUID accountId;
     private Instant createdAt;
+    private Instant updatedAt;
 
     public static Transaction createDeposit(
             Money amount,
@@ -66,14 +67,19 @@ public class Transaction {
             String reference,
             UUID accountId
     ) {
+        UUID id = UUID.randomUUID();
+        Instant now = Instant.now();
+
         Transaction transaction = Transaction.builder()
+                .id(id)
                 .type(type)
                 .amount(amount)
                 .balanceBefore(balanceBefore)
                 .balanceAfter(balanceAfter)
                 .reference(reference)
                 .accountId(accountId)
-                .createdAt(Instant.now())
+                .createdAt(now)
+                .updatedAt(now)
                 .build();
 
         transaction.validate();
@@ -99,6 +105,7 @@ public class Transaction {
                 .reference(reference)
                 .accountId(accountId)
                 .createdAt(createdAt)
+                .updatedAt(createdAt)
                 .build();
     }
 
