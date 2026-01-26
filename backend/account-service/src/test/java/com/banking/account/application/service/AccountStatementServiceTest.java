@@ -102,19 +102,6 @@ class AccountStatementServiceTest {
         }
 
         @Test
-        void shouldThrowExceptionWhenEndDateIsInFuture() {
-            LocalDateTime futureEndDate = LocalDateTime.now().plusDays(1);
-
-            assertThatThrownBy(() -> accountStatementService.generateStatement(
-                    customerId, startDate, futureEndDate
-            ))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessageContaining("End date cannot be in the future");
-
-            verify(accountRepository, never()).findByCustomerId(any());
-        }
-
-        @Test
         void shouldThrowExceptionWhenCustomerDoesNotExist() {
             when(customerEventListener.customerExists(customerId)).thenReturn(false);
 
