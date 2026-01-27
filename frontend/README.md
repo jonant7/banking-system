@@ -73,7 +73,7 @@ frontend/
 │   │   │   ├── interceptors/
 │   │   │   │   └── service-url.interceptor.ts
 │   │   │   ├── models/
-│   │   │   │   └── api-config.interface.ts
+│   │   │   │   └── api-config.model.ts
 │   │   │   └── services/
 │   │   │       └── health-check.service.ts
 │   │   │
