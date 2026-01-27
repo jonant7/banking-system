@@ -1,4 +1,4 @@
-import type { Config } from 'jest';
+import type {Config} from 'jest';
 
 const config: Config = {
   preset: 'jest-preset-angular',
@@ -28,7 +28,8 @@ const config: Config = {
     '/dist/'
   ],
   moduleNameMapper: {
-    '^@/(.*)$': '<rootDir>/src/$1'
+    '^@/(.*)$': '<rootDir>/src/$1',
+    '^@core/(.*)$': '<rootDir>/src/app/core/$1',
   }
 };
 
