@@ -3,6 +3,7 @@ package com.banking.account.presentation.rest;
 import com.banking.account.application.dto.AccountStatementReport;
 import com.banking.account.application.port.in.GenerateAccountStatementUseCase;
 import com.banking.account.application.port.out.CustomerEventListener;
+import com.banking.account.application.service.PdfGeneratorService;
 import com.banking.account.fixtures.mothers.ReportMother;
 import com.banking.account.fixtures.mothers.StatementResponseMother;
 import com.banking.account.infrastructure.util.MessageUtils;
@@ -18,8 +19,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -39,6 +38,9 @@ class ReportControllerTest {
 
     @MockitoBean
     private CustomerEventListener customerEventListener;
+
+    @MockitoBean
+    private PdfGeneratorService pdfGeneratorService;
 
     @MockitoBean
     private MessageUtils messageUtils;
@@ -152,7 +154,7 @@ class ReportControllerTest {
         }
 
         @Test
-        void shouldReturn400WhenCustomerDoesNotExist() throws Exception {
+        void shouldReturn500WhenCustomerDoesNotExist() throws Exception {
             UUID customerId = UUID.randomUUID();
             LocalDateTime startDate = LocalDateTime.now().minusDays(30);
             LocalDateTime endDate = LocalDateTime.now();
@@ -189,6 +191,38 @@ class ReportControllerTest {
                             .param("endDate", endDate.toString()))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.data.accounts.length()").value(2));
+        }
+    }
+
+    @Nested
+    class GenerateAccountStatementWithPdf {
+
+        @Test
+        void shouldGenerateAccountStatementWithPdfAndReturn200() throws Exception {
+            UUID customerId = UUID.randomUUID();
+            UUID accountId = UUID.randomUUID();
+            LocalDateTime startDate = LocalDateTime.now().minusDays(30);
+            LocalDateTime endDate = LocalDateTime.now();
+            String customerName = "John Doe";
+            String pdfBase64 = "base64encodedpdfcontent";
+
+            AccountStatementReport report = ReportMother.defaultReport(customerId, accountId, startDate, endDate);
+            AccountStatementResponse response = StatementResponseMother.defaultResponse(customerId, customerName, startDate, endDate, accountId);
+
+            when(generateStatementUseCase.generateStatement(eq(customerId), any(), any())).thenReturn(report);
+            when(customerEventListener.getCustomerName(customerId)).thenReturn(customerName);
+            when(apiMapper.toStatementResponse(report, customerName)).thenReturn(response);
+            when(pdfGeneratorService.generateAccountStatementPdf(report, customerName)).thenReturn(pdfBase64);
+
+            mockMvc.perform(get(BASE_PATH + "/pdf")
+                            .param("customerId", customerId.toString())
+                            .param("startDate", startDate.toString())
+                            .param("endDate", endDate.toString()))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.success").value(true))
+                    .andExpect(jsonPath("$.data.customerId").value(customerId.toString()));
+
+            verify(pdfGeneratorService).generateAccountStatementPdf(report, customerName);
         }
     }
 
