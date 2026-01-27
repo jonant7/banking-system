@@ -28,4 +28,13 @@ public class NoOpCustomerEventListener implements CustomerEventListener {
         return false;
     }
 
+    @Override
+    public void invalidateCache(UUID customerId) {
+        log.debug("Invalidating customer cache for ID: {}", customerId);
+    }
+
+    @Override
+    public void clearCache() {
+        log.debug("Clearing customer cache");
+    }
 }
