@@ -1,0 +1,10 @@
+<input
+  type="date"
+  class="app-date-picker"
+  [value]="value"
+  [disabled]="disabled"
+  [min]="min"
+  [max]="max"
+  (change)="onDateChange($event)"
+  (blur)="onBlur()"
+/>

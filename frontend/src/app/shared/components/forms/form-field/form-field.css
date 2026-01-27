@@ -1,0 +1,46 @@
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  margin-bottom: var(--spacing-md);
+}
+
+.form-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--gray-800);
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.required {
+  color: var(--error);
+}
+
+.form-control {
+  position: relative;
+}
+
+.form-control.has-error :ng-deep .app-input,
+.form-control.has-error :ng-deep .app-select {
+  border-color: var(--error);
+}
+
+.form-control.has-error :ng-deep .app-input:focus,
+.form-control.has-error :ng-deep .app-select:focus {
+  box-shadow: 0 0 0 3px rgba(244, 67, 54, 0.1);
+}
+
+.error-message {
+  font-size: 0.75rem;
+  color: var(--error);
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.hint-message {
+  font-size: 0.75rem;
+  color: var(--gray-600);
+}
