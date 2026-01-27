@@ -1,4 +1,4 @@
-import { ApiEnvironment } from '../app/core/models/api-config.interface';
+import {ApiEnvironment} from '../app/core/models/common/models/api-config.model';
 
 export const environment = {
   production: false,
