@@ -1,6 +1,5 @@
 package com.banking.customer.application.dto;
 
-import com.banking.customer.domain.model.CustomerStatus;
 import com.banking.customer.domain.model.Gender;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,7 +23,7 @@ public class CustomerFilter {
     private LocalDate birthDateTo;
     private Integer minAge;
     private Integer maxAge;
-    private CustomerStatus status;
+    private Boolean status;
     private String address;
     private String phone;
 
