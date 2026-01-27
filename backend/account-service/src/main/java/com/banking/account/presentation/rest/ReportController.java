@@ -3,7 +3,6 @@ package com.banking.account.presentation.rest;
 import com.banking.account.application.dto.AccountStatementReport;
 import com.banking.account.application.port.in.GenerateAccountStatementUseCase;
 import com.banking.account.application.port.out.CustomerEventListener;
-import com.banking.account.application.service.PdfGeneratorService;
 import com.banking.account.presentation.dto.response.AccountStatementResponse;
 import com.banking.account.presentation.dto.response.ApiResponse;
 import com.banking.account.presentation.mapper.AccountApiMapper;
@@ -28,7 +27,6 @@ public class ReportController {
     private final GenerateAccountStatementUseCase generateStatementUseCase;
     private final AccountApiMapper apiMapper;
     private final CustomerEventListener customerEventListener;
-    private final PdfGeneratorService pdfGeneratorService;
 
     @GetMapping
     public ResponseEntity<ApiResponse<AccountStatementResponse>> generateAccountStatement(
@@ -46,33 +44,10 @@ public class ReportController {
         );
 
         String customerName = customerEventListener.getCustomerName(customerId);
+
         AccountStatementResponse response = apiMapper.toStatementResponse(report, customerName);
 
         return ResponseEntity.ok(ApiResponse.success(response, "Report generated successfully"));
-    }
-
-    @GetMapping("/pdf")
-    public ResponseEntity<ApiResponse<AccountStatementResponse>> generateAccountStatementWithPdf(
-            @RequestParam UUID customerId,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate
-    ) {
-        log.info("REST request to generate account statement with PDF for customer: {} from {} to {}",
-                customerId, startDate, endDate);
-
-        AccountStatementReport report = generateStatementUseCase.generateStatement(
-                customerId,
-                startDate,
-                endDate
-        );
-
-        String customerName = customerEventListener.getCustomerName(customerId);
-        AccountStatementResponse response = apiMapper.toStatementResponse(report, customerName);
-
-        String pdfBase64 = pdfGeneratorService.generateAccountStatementPdf(report, customerName);
-        response.setPdfBase64(pdfBase64);
-
-        return ResponseEntity.ok(ApiResponse.success(response, "Report with PDF generated successfully"));
     }
 
 }
