@@ -31,6 +31,8 @@ public class AccountStatementResponse {
 
     private List<AccountWithTransactions> accounts;
 
+    private String pdfBase64;
+
     @Data
     @Builder
     @NoArgsConstructor
