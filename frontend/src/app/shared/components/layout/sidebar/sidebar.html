@@ -1,0 +1,12 @@
+<aside class="app-sidebar">
+  <nav class="sidebar-nav">
+    @for (item of menuItems(); track item.route) {
+      <a
+        [routerLink]="item.route"
+        routerLinkActive="active"
+        class="nav-item">
+        {{ item.label }}
+      </a>
+    }
+  </nav>
+</aside>

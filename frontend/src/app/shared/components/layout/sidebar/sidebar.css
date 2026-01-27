@@ -1,0 +1,33 @@
+.app-sidebar {
+  background-color: var(--white);
+  width: 200px;
+  height: calc(100vh - 64px);
+  border-right: 1px solid var(--gray-200);
+  position: sticky;
+  top: 64px;
+  flex-shrink: 0;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+}
+
+.nav-item {
+  padding: var(--spacing-md);
+  color: var(--gray-800);
+  font-size: 0.875rem;
+  text-decoration: none;
+  transition: background-color 200ms ease;
+  font-weight: 400;
+  border: 1px solid var(--gray-200);
+}
+
+.nav-item:hover {
+  background-color: var(--gray-100);
+}
+
+.nav-item.active {
+  background-color: var(--gray-100);
+  font-weight: 500;
+}
