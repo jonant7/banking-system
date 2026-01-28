@@ -59,6 +59,7 @@ public class AccountApiMapper {
                 .currentBalance(response.getCurrentBalance())
                 .status(response.getStatus())
                 .customerId(response.getCustomerId())
+                .customerName(response.getCustomerName())
                 .createdAt(response.getCreatedAt())
                 .updatedAt(response.getUpdatedAt())
                 .build();

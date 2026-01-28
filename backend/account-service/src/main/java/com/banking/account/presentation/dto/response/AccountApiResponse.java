@@ -34,6 +34,8 @@ public class AccountApiResponse {
 
     private UUID customerId;
 
+    private String customerName;
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private Instant createdAt;
 
