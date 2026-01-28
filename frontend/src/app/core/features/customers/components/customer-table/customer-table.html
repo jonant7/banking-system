@@ -1,0 +1,11 @@
+<app-data-table
+  [config]="tableConfig"
+  [dataSource]="loadCustomers"
+>
+  <div header-actions>
+    <app-button (clicked)="onCreateNew()"
+                variant="secondary">
+      Nuevo
+    </app-button>
+  </div>
+</app-data-table>
