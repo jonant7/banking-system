@@ -1,0 +1,109 @@
+<div class="table-wrapper">
+  <div class="table-container">
+    @if (loading) {
+      <div class="table-loading">
+        <div class="spinner"></div>
+        <p>Cargando...</p>
+      </div>
+    } @else {
+      @if (data.length === 0) {
+        <div class="table-empty">
+          <svg width="48" height="48" viewBox="0 0 48 48" fill="currentColor">
+            <path
+              d="M24 4C12.95 4 4 12.95 4 24s8.95 20 20 20 20-8.95 20-20S35.05 4 24 4zm2 30h-4v-4h4v4zm0-8h-4V14h4v12z"/>
+          </svg>
+          <p>{{ emptyMessage }}</p>
+        </div>
+      } @else {
+        <table class="data-table">
+          <thead>
+          <tr>
+            @for (column of columns; track column.key) {
+              <th
+                [style.width]="column.width"
+                [class.sortable]="column.sortable"
+                (click)="onSort(column)">
+                <div class="th-content">
+                  <span>{{ column.label }}</span>
+                  @if (column.sortable && sortColumn === column.key) {
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                      @if (sortDirection === 'asc') {
+                        <path d="M8 3L12 9H4L8 3Z"/>
+                      } @else {
+                        <path d="M8 13L4 7H12L8 13Z"/>
+                      }
+                    </svg>
+                  }
+                </div>
+              </th>
+            }
+            @if (showActionsColumn) {
+              <th class="actions-column">Acciones</th>
+            }
+          </tr>
+          </thead>
+          <tbody>
+            @for (row of data; track trackByFn($index, row)) {
+              <tr
+                [class.clickable]="rowClickable"
+                (click)="onRowClick(row, $event)">
+                @for (column of columns; track column.key) {
+                  <td>
+                    @if (column.template) {
+                      <ng-container
+                        *ngTemplateOutlet="column.template; context: { $implicit: row, value: getCellValue(row, column) }">
+                      </ng-container>
+                    } @else {
+                      {{ getCellValue(row, column) }}
+                    }
+                  </td>
+                }
+                @if (showActionsColumn) {
+                  <td class="actions-cell">
+                    <div class="actions-menu-wrapper">
+                      <button
+                        class="actions-menu-button"
+                        (click)="toggleMenu($index, $event)"
+                        type="button">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                          <circle cx="10" cy="4" r="1.5"/>
+                          <circle cx="10" cy="10" r="1.5"/>
+                          <circle cx="10" cy="16" r="1.5"/>
+                        </svg>
+                      </button>
+
+                      @if (openMenuIndex === $index) {
+                        <div class="actions-dropdown">
+                          @for (action of getVisibleActions(row); track action.label) {
+                            <button
+                              class="action-menu-item"
+                              [class]="action.variant || 'secondary'"
+                              [disabled]="isActionDisabled(action, row)"
+                              (click)="executeAction(action, row, $event)"
+                              type="button">
+                              <span>{{ action.label }}</span>
+                            </button>
+                          }
+                        </div>
+                      }
+                    </div>
+                  </td>
+                }
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
+    }
+  </div>
+
+  @if (showPagination && totalItems > 0 && !loading) {
+    <app-pagination
+      [currentPage]="currentPage"
+      [totalPages]="totalPages"
+      [pageSize]="pageSize"
+      [totalItems]="totalItems"
+      (pageChanged)="onPageChange($event)"
+    />
+  }
+</div>
