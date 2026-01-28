@@ -1,0 +1,35 @@
+<div class="data-table-wrapper">
+  @if (showSearchBox) {
+    <div class="data-table-header">
+      <app-search-box
+        [placeholder]="searchPlaceholder"
+        [debounce]="searchDebounce"
+        [value]="searchQuery"
+        (searchChanged)="onSearch($event)"
+      />
+
+      <div class="header-actions">
+        <ng-content select="[header-actions]"></ng-content>
+      </div>
+    </div>
+  }
+
+  <app-table
+    [columns]="config.columns"
+    [data]="data"
+    [actions]="config.actions || []"
+    [loading]="loading"
+    [emptyMessage]="config.emptyMessage || 'No hay datos disponibles'"
+    [showPagination]="showPaginationControl"
+    [currentPage]="currentPage"
+    [totalPages]="totalPages"
+    [pageSize]="pageSize"
+    [totalItems]="totalItems"
+    [sortColumn]="sortColumn"
+    [sortDirection]="sortDirection"
+    [rowClickable]="config.rowClickable || false"
+    (rowClicked)="onRowClick($event)"
+    (sortChanged)="onSort($event)"
+    (pageChanged)="onPageChange($event)"
+  />
+</div>

@@ -1,0 +1,35 @@
+.data-table-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.data-table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacing-md);
+  flex-wrap: wrap;
+}
+
+.header-actions {
+  display: flex;
+  gap: var(--spacing-sm);
+  align-items: center;
+}
+
+.header-actions:empty {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  .data-table-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  app-search-box {
+    width: 100%;
+    max-width: none;
+  }
+}
