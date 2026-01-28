@@ -8,6 +8,7 @@ export interface AccountApiResponse {
   currentBalance: number;
   status: AccountStatus;
   customerId: string;
+  customerName: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -20,6 +21,7 @@ export interface Account {
   currentBalance: number;
   status: AccountStatus;
   customerId: string;
+  customerName: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -61,6 +63,7 @@ export interface AccountTableRow {
   status: AccountStatus;
   statusLabel: string;
   customerId: string;
+  customerName: string;
   createdAt: Date;
 }
 

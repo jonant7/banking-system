@@ -43,6 +43,7 @@ export const AccountMapper = {
     status: account.status,
     statusLabel: getStatusLabel(account.status),
     customerId: account.customerId,
+    customerName: account.customerName,
     createdAt: new Date(account.createdAt)
   }),
 

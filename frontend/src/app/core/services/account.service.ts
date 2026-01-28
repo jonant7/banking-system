@@ -1,18 +1,22 @@
 import {inject, Injectable} from '@angular/core';
 import {HttpClient, HttpParams} from '@angular/common/http';
-import {Observable} from 'rxjs';
+import {Observable, tap} from 'rxjs';
 import {AccountApiResponse, AccountFilter, CreateAccountRequest} from '@core/models/account';
 import {ApiResponse, PageResponse} from '@core/models/common';
+import {NotificationService} from './notification.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AccountService {
   private readonly http = inject(HttpClient);
+  private readonly notificationService = inject(NotificationService);
   private readonly baseUrl = 'api/accounts';
 
   create(request: CreateAccountRequest): Observable<ApiResponse<AccountApiResponse>> {
-    return this.http.post<ApiResponse<AccountApiResponse>>(this.baseUrl, request);
+    return this.http.post<ApiResponse<AccountApiResponse>>(this.baseUrl, request).pipe(
+      tap(() => this.notificationService.success('Cuenta creada exitosamente'))
+    );
   }
 
   getAll(filter?: AccountFilter): Observable<PageResponse<AccountApiResponse>> {
@@ -20,8 +24,8 @@ export class AccountService {
 
     if (filter) {
       Object.entries(filter).forEach(([key, value]) => {
-        if (value !== undefined && value !== null) {
-          params = params.set(key, String(value));
+        if (value !== undefined && value !== null && value !== '') {
+          params = params.set(key, value.toString());
         }
       });
     }
@@ -38,11 +42,14 @@ export class AccountService {
   }
 
   activate(id: string): Observable<ApiResponse<AccountApiResponse>> {
-    return this.http.patch<ApiResponse<AccountApiResponse>>(`${this.baseUrl}/${id}/activate`, {});
+    return this.http.patch<ApiResponse<AccountApiResponse>>(`${this.baseUrl}/${id}/activate`, {}).pipe(
+      tap(() => this.notificationService.success('Cuenta activada exitosamente'))
+    );
   }
 
   deactivate(id: string): Observable<ApiResponse<AccountApiResponse>> {
-    return this.http.patch<ApiResponse<AccountApiResponse>>(`${this.baseUrl}/${id}/deactivate`, {});
+    return this.http.patch<ApiResponse<AccountApiResponse>>(`${this.baseUrl}/${id}/deactivate`, {}).pipe(
+      tap(() => this.notificationService.success('Cuenta desactivada exitosamente'))
+    );
   }
-
 }
