@@ -1,0 +1,12 @@
+<div class="customer-list-page">
+  <div class="page-header">
+    <h2 class="page-title">Clientes</h2>
+  </div>
+
+  <div class="page-content">
+    <app-customer-table
+      (editCustomer)="onEdit($event)"
+      (toggleStatus)="onToggleStatus($event)"
+    />
+  </div>
+</div>
