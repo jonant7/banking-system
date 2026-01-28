@@ -31,6 +31,27 @@ export const routes: Routes = [
           import('./core/features/customers/pages/customer-form/customer-form.page').then(
             (m) => m.CustomerFormPage
           )
+      },
+      {
+        path: 'accounts',
+        loadComponent: () =>
+          import('./core/features/accounts/pages/account-list/account-list.page').then(
+            (m) => m.AccountListPage
+          )
+      },
+      {
+        path: 'accounts/new',
+        loadComponent: () =>
+          import('./core/features/accounts/pages/account-form/account-form.page').then(
+            (m) => m.AccountFormPage
+          )
+      },
+      {
+        path: 'accounts/:id',
+        loadComponent: () =>
+          import('./core/features/accounts/pages/account-form/account-form.page').then(
+            (m) => m.AccountFormPage
+          )
       }
     ]
   }
