@@ -1,0 +1,13 @@
+import {Component, Input} from '@angular/core';
+
+@Component({
+  selector: 'app-loading-spinner',
+  imports: [],
+  templateUrl: './loading-spinner.html',
+  styleUrl: './loading-spinner.css'
+})
+export class LoadingSpinner {
+  @Input() size: 'sm' | 'md' | 'lg' = 'md';
+  @Input() message = '';
+  @Input() overlay = false;
+}
