@@ -3,10 +3,10 @@ import {Component, Input} from '@angular/core';
 @Component({
   selector: 'app-loading-spinner',
   imports: [],
-  templateUrl: './loading-spinner.html',
-  styleUrl: './loading-spinner.css'
+  templateUrl: './loading-spinner.component.html',
+  styleUrl: './loading-spinner.component.css'
 })
-export class LoadingSpinner {
+export class LoadingSpinnerComponent {
   @Input() size: 'sm' | 'md' | 'lg' = 'md';
   @Input() message = '';
   @Input() overlay = false;

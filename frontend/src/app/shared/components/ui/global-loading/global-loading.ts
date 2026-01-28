@@ -1,10 +1,10 @@
 import {Component, inject} from '@angular/core';
 import {LoadingService} from '@core/services/loading.service';
-import {LoadingSpinner} from '@shared/components/ui/loading-spinner/loading-spinner';
+import {LoadingSpinnerComponent} from '@shared/components/ui/loading-spinner/loading-spinner.component';
 
 @Component({
   selector: 'app-global-loading',
-  imports: [LoadingSpinner],
+  imports: [LoadingSpinnerComponent],
   template: `
     @if (loadingService.isLoading()) {
       <app-loading-spinner

@@ -1,18 +1,18 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import {FormError} from './form-error';
+import {PaginationComponent} from './pagination.component';
 
-describe('FormError', () => {
-  let component: FormError;
-  let fixture: ComponentFixture<FormError>;
+describe('Pagination', () => {
+  let component: PaginationComponent;
+  let fixture: ComponentFixture<PaginationComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [FormError]
+      imports: [PaginationComponent]
     })
       .compileComponents();
 
-    fixture = TestBed.createComponent(FormError);
+    fixture = TestBed.createComponent(PaginationComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

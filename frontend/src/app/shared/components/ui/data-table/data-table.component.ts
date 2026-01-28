@@ -11,8 +11,8 @@ import {
 } from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {Observable} from 'rxjs';
-import {SortEvent, Table, TableAction, TableColumn} from '@shared/components/ui/table/table';
-import {SearchBox} from '@shared/components/ui/search-box/search-box';
+import {SortEvent, TableAction, TableColumn, TableComponent} from '@shared/components/ui/table/table.component';
+import {SearchBoxComponent} from '@shared/components/ui/search-box/search-box.component';
 
 export interface DataTableConfig<T> {
   columns: TableColumn<T>[];
@@ -43,12 +43,12 @@ export interface DataTableResponse<T> {
 @Component({
   selector: 'app-data-table',
   standalone: true,
-  imports: [CommonModule, Table, SearchBox],
-  templateUrl: './data-table.html',
-  styleUrl: './data-table.css'
+  imports: [CommonModule, TableComponent, SearchBoxComponent],
+  templateUrl: './data-table.component.html',
+  styleUrl: './data-table.component.css'
 })
-export class DataTable<T = any> implements OnInit, OnChanges {
-  @ViewChild(Table) tableComponent?: Table<T>;
+export class DataTableComponent<T = any> implements OnInit, OnChanges {
+  @ViewChild(TableComponent) tableComponent?: TableComponent<T>;
 
   @Input() config!: DataTableConfig<T>;
   @Input() dataSource!: (params: DataTableParams) => Observable<DataTableResponse<T>>;

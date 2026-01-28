@@ -3,14 +3,21 @@ import {ValidationErrors} from '@angular/forms';
 
 @Component({
   selector: 'app-form-error',
+  standalone: true,
   imports: [],
-  templateUrl: './form-error.html',
-  styleUrl: './form-error.css'
+  templateUrl: './form-error.component.html',
+  styleUrl: './form-error.component.css'
 })
-export class FormError {
+export class FormErrorComponent {
   @Input() errors: ValidationErrors | null = null;
+  @Input() show = false;
+  @Input() message = '';
 
   getErrorMessage(): string {
+    if (this.message) {
+      return this.message;
+    }
+
     if (!this.errors) {
       return '';
     }
@@ -49,4 +56,9 @@ export class FormError {
 
     return 'Campo inválido';
   }
+
+  get shouldShow(): boolean {
+    return this.show || !!this.errors;
+  }
+
 }

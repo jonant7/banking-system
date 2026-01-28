@@ -1,18 +1,18 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import {Select} from './select';
+import {DatePickerComponent} from './date-picker.component';
 
-describe('Select', () => {
-  let component: Select;
-  let fixture: ComponentFixture<Select>;
+describe('DatePicker', () => {
+  let component: DatePickerComponent;
+  let fixture: ComponentFixture<DatePickerComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Select]
+      imports: [DatePickerComponent]
     })
       .compileComponents();
 
-    fixture = TestBed.createComponent(Select);
+    fixture = TestBed.createComponent(DatePickerComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

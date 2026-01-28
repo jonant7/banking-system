@@ -1,24 +1,25 @@
 import {Component, forwardRef, Input} from '@angular/core';
-import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
+import {NG_VALUE_ACCESSOR} from '@angular/forms';
 
 @Component({
-  selector: 'app-date-picker',
+  selector: 'app-input',
   imports: [],
-  templateUrl: './date-picker.html',
-  styleUrl: './date-picker.css',
+  templateUrl: './input.component.html',
+  styleUrl: './input.component.css',
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => DatePicker),
+      useExisting: forwardRef(() => InputComponent),
       multi: true
     }
   ]
 })
-export class DatePicker implements ControlValueAccessor {
-  @Input() placeholder = 'dd/mm/yyyy';
+export class InputComponent {
+
+  @Input() type: 'text' | 'email' | 'password' | 'number' | 'tel' = 'text';
+  @Input() placeholder = '';
   @Input() disabled = false;
-  @Input() min?: string;
-  @Input() max?: string;
+  @Input() readonly = false;
 
   value = '';
   onChange: (value: string) => void = () => {
@@ -42,7 +43,7 @@ export class DatePicker implements ControlValueAccessor {
     this.disabled = isDisabled;
   }
 
-  onDateChange(event: Event): void {
+  onInput(event: Event): void {
     const input = event.target as HTMLInputElement;
     this.value = input.value;
     this.onChange(this.value);
