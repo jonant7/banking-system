@@ -1,6 +1,6 @@
 import {Component, EventEmitter, HostListener, Input, Output, TemplateRef} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {Pagination} from '@shared/components/ui/pagination/pagination';
+import {PaginationComponent} from '@shared/components/ui/pagination/pagination.component';
 
 export interface TableColumn<T = any> {
   key: string;
@@ -27,11 +27,11 @@ export interface SortEvent {
 @Component({
   selector: 'app-table',
   standalone: true,
-  imports: [CommonModule, Pagination],
-  templateUrl: './table.html',
-  styleUrl: './table.css'
+  imports: [CommonModule, PaginationComponent],
+  templateUrl: './table.component.html',
+  styleUrl: './table.component.css'
 })
-export class Table<T = any> {
+export class TableComponent<T = any> {
   @Input() columns: TableColumn<T>[] = [];
   @Input() data: T[] = [];
   @Input() actions: TableAction<T>[] = [];

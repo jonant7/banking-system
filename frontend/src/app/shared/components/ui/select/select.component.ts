@@ -9,17 +9,17 @@ export interface SelectOption {
 @Component({
   selector: 'app-select',
   imports: [],
-  templateUrl: './select.html',
-  styleUrl: './select.css',
+  templateUrl: './select.component.html',
+  styleUrl: './select.component.css',
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => Select),
+      useExisting: forwardRef(() => SelectComponent),
       multi: true
     }
   ]
 })
-export class Select implements ControlValueAccessor {
+export class SelectComponent implements ControlValueAccessor {
   @Input() options: SelectOption[] = [];
   @Input() placeholder = 'Seleccionar...';
   @Input() disabled = false;

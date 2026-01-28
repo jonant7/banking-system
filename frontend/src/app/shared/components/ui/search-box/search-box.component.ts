@@ -7,10 +7,10 @@ import {debounceTime, distinctUntilChanged} from 'rxjs/operators';
   selector: 'app-search-box',
   standalone: true,
   imports: [FormsModule],
-  templateUrl: './search-box.html',
-  styleUrl: './search-box.css'
+  templateUrl: './search-box.component.html',
+  styleUrl: './search-box.component.css'
 })
-export class SearchBox implements OnDestroy {
+export class SearchBoxComponent implements OnDestroy {
   @Input() placeholder = 'Buscar...';
   @Input() debounce = 400;
   @Input() value = '';

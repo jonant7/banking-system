@@ -3,10 +3,10 @@ import {Component, EventEmitter, Input, Output} from '@angular/core';
 @Component({
   selector: 'app-pagination',
   standalone: true,
-  templateUrl: './pagination.html',
-  styleUrl: './pagination.css'
+  templateUrl: './pagination.component.html',
+  styleUrl: './pagination.component.css'
 })
-export class Pagination {
+export class PaginationComponent {
   @Input() currentPage = 1;
   @Input() totalPages = 1;
   @Input() pageSize = 10;

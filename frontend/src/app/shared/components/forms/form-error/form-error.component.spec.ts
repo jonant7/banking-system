@@ -1,18 +1,18 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import {DataTable} from './data-table';
+import {FormErrorComponent} from './form-error.component';
 
-describe('DataTable', () => {
-  let component: DataTable;
-  let fixture: ComponentFixture<DataTable>;
+describe('FormError', () => {
+  let component: FormErrorComponent;
+  let fixture: ComponentFixture<FormErrorComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [DataTable]
+      imports: [FormErrorComponent]
     })
       .compileComponents();
 
-    fixture = TestBed.createComponent(DataTable);
+    fixture = TestBed.createComponent(FormErrorComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

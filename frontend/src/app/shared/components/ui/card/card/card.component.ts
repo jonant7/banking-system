@@ -3,10 +3,10 @@ import {Component, Input} from '@angular/core';
 @Component({
   selector: 'app-card',
   imports: [],
-  templateUrl: './card.html',
-  styleUrl: './card.css'
+  templateUrl: './card.component.html',
+  styleUrl: './card.component.css'
 })
-export class Card {
+export class CardComponent {
   @Input() title = '';
   @Input() subtitle = '';
   @Input() padding: 'none' | 'sm' | 'md' | 'lg' = 'md';

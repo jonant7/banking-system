@@ -3,10 +3,10 @@ import {Component, Input} from '@angular/core';
 @Component({
   selector: 'app-form-field',
   imports: [],
-  templateUrl: './form-field.html',
-  styleUrl: './form-field.css'
+  templateUrl: './form-field.component.html',
+  styleUrl: './form-field.component.css'
 })
-export class FormField {
+export class FormFieldComponent {
   @Input() label = '';
   @Input() required = false;
   @Input() error = '';

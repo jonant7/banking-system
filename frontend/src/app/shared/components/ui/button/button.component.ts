@@ -3,10 +3,10 @@ import {Component, EventEmitter, Input, Output} from '@angular/core';
 @Component({
   selector: 'app-button',
   imports: [],
-  templateUrl: './button.html',
-  styleUrl: './button.css'
+  templateUrl: './button.component.html',
+  styleUrl: './button.component.css'
 })
-export class Button {
+export class ButtonComponent {
   @Input() type: 'button' | 'submit' | 'reset' = 'button';
   @Input() variant: 'primary' | 'secondary' | 'danger' | 'outline' = 'primary';
   @Input() size: 'sm' | 'md' | 'lg' = 'md';
