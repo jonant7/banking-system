@@ -1,0 +1,80 @@
+<div class="account-form-page">
+  <div class="page-header">
+    <h2 class="page-title">{{ pageTitle() }}</h2>
+  </div>
+
+  <app-card>
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="account-form">
+      <div class="form-section">
+        <h3 class="section-title">Información de la Cuenta</h3>
+
+        <div class="form-row">
+          <app-form-field label="Número de Cuenta" [required]="true" [error]="getFieldError('accountNumber')">
+            <app-input
+              formControlName="accountNumber"
+              placeholder="Ingrese número de cuenta (7 dígitos)"
+              type="text"
+              maxlength="15"
+            />
+          </app-form-field>
+
+          <app-form-field label="Tipo de Cuenta" [required]="true" [error]="getFieldError('accountType')">
+            <app-select
+              formControlName="accountType"
+              [options]="accountTypeOptions"
+              placeholder="Seleccione el tipo"
+            />
+          </app-form-field>
+        </div>
+
+        <div class="form-row">
+          <app-form-field label="Saldo Inicial" [required]="true" [error]="getFieldError('initialBalance')">
+            <app-input
+              formControlName="initialBalance"
+              placeholder="Ingrese el saldo inicial"
+              type="number"
+              step="0.01"
+              min="0"
+            />
+          </app-form-field>
+
+          <app-form-field label="Cliente" [required]="true" [error]="getFieldError('customerId')">
+            <app-select
+              formControlName="customerId"
+              [options]="customerOptions()"
+              placeholder="Seleccione el cliente"
+            />
+          </app-form-field>
+        </div>
+      </div>
+
+      @if (!isEditMode()) {
+        <div class="form-actions">
+          <app-button
+            type="button"
+            variant="outline"
+            (clicked)="onCancel()"
+            [disabled]="loading()">
+            Cancelar
+          </app-button>
+          <app-button
+            type="submit"
+            variant="secondary"
+            [loading]="loading()"
+            [disabled]="form.invalid || loading()">
+            Crear Cuenta
+          </app-button>
+        </div>
+      } @else {
+        <div class="form-actions">
+          <app-button
+            type="button"
+            variant="secondary"
+            (clicked)="onCancel()">
+            Volver
+          </app-button>
+        </div>
+      }
+    </form>
+  </app-card>
+</div>
