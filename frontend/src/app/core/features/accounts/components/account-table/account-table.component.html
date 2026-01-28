@@ -1,0 +1,12 @@
+<app-data-table
+  [config]="tableConfig"
+  [dataSource]="loadAccounts"
+>
+  <div header-actions>
+    <app-button
+      (clicked)="onCreateNew()"
+      variant="secondary">
+      Nueva Cuenta
+    </app-button>
+  </div>
+</app-data-table>

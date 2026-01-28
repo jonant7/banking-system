@@ -24,6 +24,7 @@ public class AccountResponse {
     private BigDecimal currentBalance;
     private AccountStatus status;
     private UUID customerId;
+    private String customerName;
     private Instant createdAt;
     private Instant updatedAt;
 
