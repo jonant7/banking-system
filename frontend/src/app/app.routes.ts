@@ -52,7 +52,21 @@ export const routes: Routes = [
           import('./core/features/accounts/pages/account-form/account-form.page').then(
             (m) => m.AccountFormPage
           )
-      }
+      },
+      {
+        path: 'transactions',
+        loadComponent: () =>
+          import('./core/features/transactions/pages/transaction-list/transaction-list.page').then(
+            (m) => m.TransactionListPage
+          )
+      },
+      {
+        path: 'transactions/new',
+        loadComponent: () =>
+          import('./core/features/transactions/pages/transaction-form/transaction-form.page').then(
+            (m) => m.TransactionFormPage
+          )
+      },
     ]
   }
 ];
