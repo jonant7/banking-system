@@ -6,9 +6,19 @@ Angular application providing user interface for banking operations including cu
 
 Modern single-page application built with Angular 20 standalone components, featuring reactive state management, type-safe API integration, and comprehensive test coverage.
 
+**Features:**
+
+- Customer management (CRUD operations)
+- Account administration
+- Transaction processing (deposits/withdrawals)
+- Account statements with date range filtering
+- PDF report generation
+- Responsive design with modern UI components
+
 **Current Implementation:**
 - Core services and HTTP interceptors
-- Health check functionality
+- Routing and navigation
+- Reusable UI components (tables, forms, badges)
 - API integration layer
 - Testing infrastructure with Jest
 - Docker containerization with Nginx
@@ -70,42 +80,59 @@ frontend/
 ├── src/
 │   ├── app/
 │   │   ├── core/                       # Singleton services
+│   │   │   ├── guards/
 │   │   │   ├── interceptors/
 │   │   │   │   └── service-url.interceptor.ts
 │   │   │   ├── models/
-│   │   │   │   └── api-config.interface.ts
-│   │   │   └── services/
-│   │   │       └── health-check.service.ts
+│   │   │   ├── services/
+│   │   │   │   ├── customer.service.ts
+│   │   │   │   ├── account.service.ts
+│   │   │   │   ├── transaction.service.ts
+│   │   │   │   └── report.service.ts
+│   │   │   └── utils/
+│   │   │       ├── date.utils.ts
+│   │   │       └── format.utils.ts
 │   │   │
-│   │   ├── features/                   # Feature modules (to be implemented)
+│   │   ├── features/                   # Feature modules
 │   │   │   ├── customers/
-│   │   │   └── accounts/
+│   │   │   │   ├── customer-list/
+│   │   │   │   ├── customer-form/
+│   │   │   │   └── customer-detail/
+│   │   │   ├── accounts/
+│   │   │   │   ├── account-list/
+│   │   │   │   ├── account-detail/
+│   │   │   │   └── transaction-table/
+│   │   │   └── reports/
+│   │   │       └── account-statement/
 │   │   │
-│   │   ├── shared/                     # Shared components (to be implemented)
+│   │   ├── shared/                     # Shared components
 │   │   │   └── components/
 │   │   │       ├── layout/
 │   │   │       └── ui/
+│   │   │           ├── badge/
+│   │   │           ├── button/
+│   │   │           └── table/
 │   │   │
-│   │   ├── app.config.ts               # Application configuration
-│   │   ├── app.routes.ts               # Route definitions
-│   │   ├── app.ts                      # Root component
-│   │   └── app.spec.ts                 # Root component tests
+│   │   ├── app.config.ts
+│   │   ├── app.routes.ts
+│   │   ├── app.component.ts
+│   │   └── app.component.spec.ts
+│   │
+│   ├── assets/
+│   │   └── styles/
+│   │       ├── _variables.css
+│   │       ├── _reset.css
+│   │       ├── _typography.css
+│   │       └── _utilities.css
 │   │
 │   ├── environments/
-│   │   ├── environment.ts              # Production config
-│   │   └── environment.development.ts  # Development config
-│   │
 │   ├── index.html
 │   ├── main.ts
 │   └── styles.css
 │
-├── coverage/                           # Test coverage reports
-├── Dockerfile                          # Multi-stage build
-├── nginx.conf                          # Nginx configuration
-├── proxy.conf.json                     # Dev proxy config
-├── angular.json
-├── tsconfig.json
-├── jest.config.ts
+├── Dockerfile
+├── nginx.conf
+├── proxy.conf.json
 └── package.json
 ```
 

@@ -1,0 +1,107 @@
+<div class="customer-form-page">
+  <div class="page-header">
+    <h2 class="page-title">{{ pageTitle() }}</h2>
+  </div>
+
+  <app-card>
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="customer-form">
+      <div class="form-section">
+        <h3 class="section-title">Información Personal</h3>
+
+        <div class="form-row">
+          <app-form-field label="Nombre" [required]="true" [error]="getFieldError('name')">
+            <app-input
+              formControlName="name"
+              placeholder="Ingrese el nombre"
+            />
+          </app-form-field>
+
+          <app-form-field label="Apellido" [required]="true" [error]="getFieldError('lastName')">
+            <app-input
+              formControlName="lastName"
+              placeholder="Ingrese el apellido"
+            />
+          </app-form-field>
+        </div>
+
+        <div class="form-row">
+          <app-form-field label="Género" [required]="true" [error]="getFieldError('gender')">
+            <app-select
+              formControlName="gender"
+              [options]="genderOptions"
+              placeholder="Seleccione el género"
+            />
+          </app-form-field>
+
+          <app-form-field label="Fecha de Nacimiento" [required]="true" [error]="getFieldError('birthDate')">
+            <app-date-picker formControlName="birthDate"/>
+          </app-form-field>
+        </div>
+
+        <div class="form-row">
+          <app-form-field label="Identificación" [required]="true" [error]="getFieldError('identification')">
+            <app-input
+              formControlName="identification"
+              placeholder="Ingrese la cédula"
+            />
+          </app-form-field>
+
+          <app-form-field label="Teléfono" [required]="true" [error]="getFieldError('phone')">
+            <app-input
+              type="tel"
+              formControlName="phone"
+              placeholder="Ingrese el teléfono"
+            />
+          </app-form-field>
+        </div>
+
+        <app-form-field label="Dirección" [required]="true" [error]="getFieldError('address')" class="full-width">
+          <app-input
+            formControlName="address"
+            placeholder="Ingrese la dirección"
+          />
+        </app-form-field>
+      </div>
+
+      <div class="form-section">
+        <h3 class="section-title">Información de Cuenta</h3>
+        <div class="form-row">
+          <app-form-field label="Cliente ID" [required]="true" [error]="getFieldError('customerId')">
+            <app-input
+              formControlName="customerId"
+              placeholder="Ingrese el ID del cliente"
+            />
+          </app-form-field>
+
+          @if (!isEditMode()) {
+
+            <app-form-field label="Contraseña" [required]="true" [error]="getFieldError('password')">
+              <app-input
+                type="password"
+                formControlName="password"
+                placeholder="Ingrese la contraseña"
+              />
+            </app-form-field>
+
+          }
+        </div>
+      </div>
+      <div class="form-actions">
+        <app-button
+          type="button"
+          variant="outline"
+          (clicked)="onCancel()"
+          [disabled]="loading()">
+          Cancelar
+        </app-button>
+        <app-button
+          type="submit"
+          variant="secondary"
+          [loading]="loading()"
+          [disabled]="form.invalid || loading()">
+          {{ isEditMode() ? 'Actualizar' : 'Guardar' }}
+        </app-button>
+      </div>
+    </form>
+  </app-card>
+</div>

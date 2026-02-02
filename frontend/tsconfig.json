@@ -14,7 +14,33 @@
     "importHelpers": true,
     "target": "ES2022",
     "module": "preserve",
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "paths": {
+      "@core/models": [
+        "./src/app/core/models"
+      ],
+      "@core/models/*": [
+        "./src/app/core/models/*"
+      ],
+      "@core/services": [
+        "./src/app/core/services"
+      ],
+      "@core/services/*": [
+        "./src/app/core/services/*"
+      ],
+      "@core/utils": [
+        "./src/app/core/utils"
+      ],
+      "@core/utils/*": [
+        "./src/app/core/utils/*"
+      ],
+      "@shared/components": [
+        "./src/app/shared/components"
+      ],
+      "@shared/components/*": [
+        "./src/app/shared/components/*"
+      ]
+    }
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,

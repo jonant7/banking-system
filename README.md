@@ -2,8 +2,30 @@
 
 Microservices-based banking system built with Spring Boot and Angular, implementing customer management, account operations, and transaction processing with event-driven architecture.
 
+## 🏗️ Architecture
+
+```
+┌─────────────┐     ┌──────────────┐     ┌────────────┐
+│  Frontend   │────►│   Customer   │────►│ PostgreSQL │
+│  (Angular)  │     │   Service    │     │ (Port 5432)│
+└─────────────┘     │  (Port 8081) │     └────────────┘
+      │             └──────┬───────┘
+      │                    │
+      │               ┌────▼─────┐
+      │               │ RabbitMQ │
+      │               │  Events  │
+      │               └────┬─────┘
+      │                    │
+      │             ┌──────▼───────┐     ┌────────────┐
+      └────────────►│   Account    │────►│ PostgreSQL │
+                    │   Service    │     │ (Port 5433)│
+                    │  (Port 8082) │     └────────────┘
+                    └──────────────┘
+```
+
 **Services:**
-- **customer-service**: Customer management
+
+- **customer-service**: Customer management and authentication
 - **account-service**: Accounts, transactions, and reporting
 - **contracts**: Shared event definitions
 - **frontend**: Angular UI for banking operations

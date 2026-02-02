@@ -1,0 +1,149 @@
+<div class="table-wrapper">
+  <div class="table-header">
+    @if (showSearch) {
+      <app-table-search
+        [dataSource]="dataSource"
+        [placeholder]="searchPlaceholder"
+        [ariaLabel]="searchAriaLabel"
+      />
+    }
+
+    <div class="header-actions">
+      <ng-content select="[header-actions]"></ng-content>
+    </div>
+  </div>
+
+  <div class="table-container" [class.sticky-header]="stickyHeader">
+    @if (loading && data.length === 0) {
+      <div class="table-loading" role="status" aria-live="polite">
+        <div class="spinner" aria-hidden="true"></div>
+        <p>{{ loadingMessage }}</p>
+      </div>
+    } @else if (!loading && data.length === 0) {
+      <div class="table-empty" role="status">
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="currentColor">
+          <path
+            d="M24 4C12.95 4 4 12.95 4 24s8.95 20 20 20 20-8.95 20-20S35.05 4 24 4zm2 30h-4v-4h4v4zm0-8h-4V14h4v12z"/>
+        </svg>
+        <p>{{ emptyMessage }}</p>
+      </div>
+    } @else {
+      <table class="data-table">
+        <thead>
+        <tr>
+          @for (columnName of displayedColumns; track columnName) {
+            @if (getColumnDef(columnName); as columnDef) {
+              <th
+                [style.width]="getColumnWidth(columnName)"
+                [class]="getHeaderClasses(columnName)"
+                [attr.aria-sort]="getAriaSortValue(columnName)"
+                [attr.tabindex]="columnDef.sortable ? 0 : undefined"
+                (click)="handleHeaderClick(columnName)"
+                (keydown.enter)="handleHeaderClick(columnName)"
+                (keydown.space)="handleHeaderClick(columnName)">
+
+                <div class="header-content">
+                  @if (columnDef.headerTemplate) {
+                    <ng-container
+                      *ngTemplateOutlet="
+                        columnDef.headerTemplate;
+                        context: getHeaderContext(columnName)
+                      ">
+                    </ng-container>
+                  } @else {
+                    <span>{{ columnName }}</span>
+                  }
+
+                  @if (columnDef.sortable && shouldShowSortIcon(columnName)) {
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 16 16"
+                      fill="currentColor"
+                      aria-hidden="true">
+                      @if (sortDirection === 'ASC') {
+                        <path d="M8 3L12 9H4L8 3Z"/>
+                      } @else {
+                        <path d="M8 13L4 7H12L8 13Z"/>
+                      }
+                    </svg>
+                  }
+                </div>
+              </th>
+            }
+          }
+        </tr>
+        </thead>
+
+        <tbody>
+          @for (row of data; track trackBy($index, row); let rowIndex = $index) {
+            <tr
+              [class]="getRowClasses(row, rowIndex)"
+              [attr.tabindex]="rowClickable ? 0 : undefined"
+              (click)="handleRowClick(row)"
+              (keydown.enter)="handleRowClick(row)"
+              (keydown.space)="handleRowClick(row)">
+
+              @for (columnName of displayedColumns; track columnName) {
+                @if (getColumnDef(columnName); as columnDef) {
+                  <td [class]="getCellClasses(columnName, row)">
+                    @if (columnDef.cellTemplate) {
+                      <ng-container
+                        *ngTemplateOutlet="
+                          columnDef.cellTemplate;
+                          context: getCellContext(row, columnName, rowIndex)
+                        ">
+                      </ng-container>
+                    } @else if (columnDef.actionTemplate) {
+                      <div class="action-cell">
+                        <button
+                          class="action-button"
+                          type="button"
+                          [attr.aria-expanded]="isActionMenuOpen(rowIndex)"
+                          [attr.aria-label]="'Acciones para fila ' + (rowIndex + 1)"
+                          (click)="toggleActionMenu($event, rowIndex)">
+                          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                            <circle cx="8" cy="3" r="1.5"/>
+                            <circle cx="8" cy="8" r="1.5"/>
+                            <circle cx="8" cy="13" r="1.5"/>
+                          </svg>
+                        </button>
+                        @if (isActionMenuOpen(rowIndex)) {
+                          <div class="action-menu" (click)="$event.stopPropagation()">
+                            <ng-container
+                              *ngTemplateOutlet="
+                                columnDef.actionTemplate;
+                                context: { $implicit: row, index: rowIndex }
+                              ">
+                            </ng-container>
+                          </div>
+                        }
+                      </div>
+                    } @else {
+                      {{ getDefaultCellValue(row, columnName) }}
+                    }
+                  </td>
+                }
+              }
+            </tr>
+          }
+        </tbody>
+      </table>
+
+      @if (loading) {
+        <div class="loading-overlay" aria-hidden="true">
+          <div class="spinner-small"></div>
+        </div>
+      }
+    }
+  </div>
+
+  @if (showPagination && totalElements > 0 && !loading) {
+    <app-table-pagination
+      [dataSource]="dataSource"
+      [showPageInfo]="showPageInfo"
+      [showPageSizeOptions]="showPageSizeOptions"
+      [pageSizeOptions]="pageSizeOptions"
+    />
+  }
+</div>

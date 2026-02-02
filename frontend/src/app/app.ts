@@ -1,6 +1,7 @@
 import {Component, inject, OnInit, signal} from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import {RouterOutlet} from '@angular/router';
 import {HealthCheckService} from './core/services/health-check.service';
+import {CustomerService} from './core/services/customer.service';
 
 @Component({
   selector: 'app-root',
@@ -12,6 +13,7 @@ export class App implements OnInit {
   protected readonly title = signal('banking-fronted');
 
   private healthCheck = inject(HealthCheckService);
+  private customer = inject(CustomerService);
 
   ngOnInit(): void {
     this.healthCheck.checkCustomerService().subscribe({
@@ -23,6 +25,12 @@ export class App implements OnInit {
       next: (data) => console.log('Account Service OK:', data),
       error: (err) => console.error('Account Service Error:', err)
     });
+
+    this.customer.getAll().subscribe({
+      next: (data) => console.log('Customer OK:', data),
+      error: (err) => console.error('Customer Error:', err)
+    });
+
   }
 
 }

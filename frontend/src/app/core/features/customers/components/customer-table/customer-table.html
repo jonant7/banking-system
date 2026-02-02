@@ -1,0 +1,83 @@
+<app-advanced-table
+  [dataSource]="dataSource"
+  [displayedColumns]="displayedColumns"
+  [rowClickable]="false"
+  [showPagination]="true"
+  [showPageInfo]="true"
+  [showPageSizeOptions]="true"
+  [pageSizeOptions]="[5, 10, 25, 50, 100]"
+  searchPlaceholder="Buscar por nombre o identificación..."
+  searchAriaLabel="Buscar clientes"
+  emptyMessage="No hay clientes disponibles"
+  loadingMessage="Cargando clientes...">
+
+  <div header-actions>
+    <app-button variant="secondary" (clicked)="onCreateNew()">
+      Nuevo
+    </app-button>
+  </div>
+
+  <ng-container appColumnDef="customerId" [sortable]="true" width="80px">
+    <th *appHeaderCellDef>ID</th>
+    <td *appCellDef="let customer">{{ customer.customerId }}</td>
+  </ng-container>
+
+  <ng-container appColumnDef="fullName" [sortable]="true">
+    <th *appHeaderCellDef>Nombre</th>
+    <td *appCellDef="let customer">{{ customer.fullName }}</td>
+  </ng-container>
+
+  <ng-container appColumnDef="identification" [sortable]="true">
+    <th *appHeaderCellDef>Identificación</th>
+    <td *appCellDef="let customer">{{ customer.identification }}</td>
+  </ng-container>
+
+  <ng-container appColumnDef="address">
+    <th *appHeaderCellDef>Dirección</th>
+    <td *appCellDef="let customer">{{ customer.address || '—' }}</td>
+  </ng-container>
+
+  <ng-container appColumnDef="phone">
+    <th *appHeaderCellDef>Teléfono</th>
+    <td *appCellDef="let customer">{{ customer.phone || '—' }}</td>
+  </ng-container>
+
+  <ng-container appColumnDef="status" [sortable]="true" width="100px">
+    <th *appHeaderCellDef>Estado</th>
+    <td *appCellDef="let customer">
+      <span [class]="isActive(customer.status) ? 'status-active' : 'status-inactive'">
+        {{ getStatusLabel(customer.status) }}
+      </span>
+    </td>
+  </ng-container>
+
+  <ng-container appColumnDef="actions" width="150px" align="center">
+    <th *appHeaderCellDef>Acciones</th>
+    <td *appActionCellDef="let customer">
+      <div class="actions-cell">
+        <button
+          class="action-button primary"
+          (click)="onEdit(customer)"
+          title="Editar cliente">
+          Editar
+        </button>
+
+        @if (isActive(customer.status)) {
+          <button
+            class="action-button warning"
+            (click)="onToggle(customer)"
+            title="Desactivar cliente">
+            Desactivar
+          </button>
+        } @else {
+          <button
+            class="action-button success"
+            (click)="onToggle(customer)"
+            title="Activar cliente">
+            Activar
+          </button>
+        }
+      </div>
+    </td>
+  </ng-container>
+</app-advanced-table>

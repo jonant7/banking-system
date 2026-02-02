@@ -1,0 +1,74 @@
+<app-advanced-table
+  [dataSource]="dataSource"
+  [displayedColumns]="displayedColumns"
+  [rowClickable]="false"
+  [showPagination]="true"
+  [showPageInfo]="true"
+  [showPageSizeOptions]="true"
+  [pageSizeOptions]="[5, 10, 25, 50]"
+  searchPlaceholder="Buscar por número de cuenta..."
+  searchAriaLabel="Buscar cuentas"
+  emptyMessage="No hay cuentas disponibles"
+  loadingMessage="Cargando cuentas...">
+
+  <div header-actions>
+    <app-button variant="secondary" (clicked)="onCreateNew()">
+      Nueva Cuenta
+    </app-button>
+  </div>
+
+  <ng-container appColumnDef="accountNumber" [sortable]="true" width="150px">
+    <th *appHeaderCellDef>Número de Cuenta</th>
+    <td *appCellDef="let account">{{ account.accountNumber }}</td>
+  </ng-container>
+
+  <ng-container appColumnDef="accountType" [sortable]="true" width="120px">
+    <th *appHeaderCellDef>Tipo</th>
+    <td *appCellDef="let account">{{ getAccountTypeLabel(account.accountType) }}</td>
+  </ng-container>
+
+  <ng-container appColumnDef="initialBalance" [sortable]="true" width="130px" align="right">
+    <th *appHeaderCellDef>Saldo Inicial</th>
+    <td *appCellDef="let account">{{ formatCurrency(account.initialBalance) }}</td>
+  </ng-container>
+
+  <ng-container appColumnDef="currentBalance" [sortable]="true" width="130px" align="right">
+    <th *appHeaderCellDef>Saldo Actual</th>
+    <td *appCellDef="let account">
+      <span class="font-semibold">{{ formatCurrency(account.currentBalance) }}</span>
+    </td>
+  </ng-container>
+
+  <ng-container appColumnDef="status" [sortable]="true" width="100px">
+    <th *appHeaderCellDef>Estado</th>
+    <td *appCellDef="let account">{{ getAccountStatusLabel(account.status) }}</td>
+  </ng-container>
+
+  <ng-container appColumnDef="customerName" width="100px">
+    <th *appHeaderCellDef>Cliente ID</th>
+    <td *appCellDef="let account">{{ account.customerName || '—' }}</td>
+  </ng-container>
+
+  <ng-container appColumnDef="actions" width="100px" align="center">
+    <th *appHeaderCellDef>Acciones</th>
+    <td *appActionCellDef="let account">
+      <div class="actions-cell">
+        @if (isAccountActive(account.status)) {
+          <button
+            class="action-button warning"
+            (click)="onToggle(account)"
+            title="Desactivar cuenta">
+            Desactivar
+          </button>
+        } @else {
+          <button
+            class="action-button success"
+            (click)="onToggle(account)"
+            title="Activar cuenta">
+            Activar
+          </button>
+        }
+      </div>
+    </td>
+  </ng-container>
+</app-advanced-table>

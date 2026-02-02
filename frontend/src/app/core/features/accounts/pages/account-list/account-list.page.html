@@ -1,0 +1,12 @@
+<div class="account-list-page">
+  <div class="page-header">
+    <h2 class="page-title">Cuentas</h2>
+  </div>
+
+  <div class="page-content">
+    <app-account-table
+      (editAccount)="onEdit($event)"
+      (toggleStatus)="onToggleStatus($event)"
+    />
+  </div>
+</div>

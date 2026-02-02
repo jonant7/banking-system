@@ -1,0 +1,68 @@
+<app-advanced-table
+  [dataSource]="dataSource"
+  [displayedColumns]="displayedColumns"
+  [rowClickable]="false"
+  [showPagination]="true"
+  [showPageInfo]="true"
+  [showPageSizeOptions]="true"
+  [pageSizeOptions]="[5, 10, 25, 50]"
+  [showSearch]="false"
+  emptyMessage="No hay transacciones disponibles"
+  loadingMessage="Cargando transacciones...">
+
+  <div header-actions>
+    @if (canCreateTransaction()) {
+      <app-button variant="primary" (clicked)="createTransaction()">
+        Nueva Transacción
+      </app-button>
+    }
+  </div>
+
+  <ng-container appColumnDef="createdAt">
+    <th *appHeaderCellDef>Fecha</th>
+    <td *appCellDef="let transaction">
+      {{ formatDateTime(transaction.createdAt) }}
+    </td>
+  </ng-container>
+
+  <ng-container appColumnDef="type">
+    <th *appHeaderCellDef>Tipo</th>
+    <td *appCellDef="let transaction">
+      <app-badge [variant]="getTypeBadgeVariant(transaction.type)">
+        {{ getTypeIcon(transaction.type) }} {{ getTypeLabel(transaction.type) }}
+      </app-badge>
+    </td>
+  </ng-container>
+
+  <ng-container appColumnDef="amount" align="right">
+    <th *appHeaderCellDef>Monto</th>
+    <td *appCellDef="let transaction">
+      <app-badge [variant]="getAmountBadgeVariant(transaction.type)">
+        {{ formatCurrency(transaction.amount) }}
+      </app-badge>
+    </td>
+  </ng-container>
+
+  <ng-container appColumnDef="balanceBefore" align="right">
+    <th *appHeaderCellDef>Saldo Anterior</th>
+    <td *appCellDef="let transaction">
+      {{ formatCurrency(transaction.balanceBefore) }}
+    </td>
+  </ng-container>
+
+  <ng-container appColumnDef="balanceAfter" align="right">
+    <th *appHeaderCellDef>Saldo Actual</th>
+    <td *appCellDef="let transaction">
+      <span class="font-semibold">
+        {{ formatCurrency(transaction.balanceAfter) }}
+      </span>
+    </td>
+  </ng-container>
+
+  <ng-container appColumnDef="reference">
+    <th *appHeaderCellDef>Referencia</th>
+    <td *appCellDef="let transaction">
+      {{ transaction.reference || '—' }}
+    </td>
+  </ng-container>
+</app-advanced-table>
