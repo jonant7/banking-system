@@ -1,26 +1,42 @@
-import {Component, EventEmitter, inject, Output, ViewChild} from '@angular/core';
+import {Component, EventEmitter, inject, OnDestroy, Output, ViewChild} from '@angular/core';
 import {Router} from '@angular/router';
-import {Observable} from 'rxjs';
-import {map} from 'rxjs/operators';
-import {AccountApiResponse, AccountFilter, AccountStatusHelper, AccountTypeHelper} from '@core/models/account';
-import {AccountService} from '@core/services/account.service';
+import {Observable, of} from 'rxjs';
+import {catchError} from 'rxjs/operators';
 import {
-  DataTableComponent,
-  DataTableConfig,
-  DataTableParams,
-  DataTableResponse
-} from '@shared/components/ui/data-table/data-table.component';
+  AccountApiResponse,
+  AccountFilter,
+  AccountStatus,
+  AccountStatusHelper,
+  AccountType,
+  AccountTypeHelper
+} from '@core/models/account';
+import {AccountService} from '@core/services/account.service';
+import {PageResponse} from '@core/models';
+import {
+  ActionCellDefDirective,
+  CellDefDirective,
+  ColumnDefDirective,
+  HeaderCellDefDirective
+} from '@shared/components/ui/table/table-column.directives';
+import {DataSourceQuery, RemoteTableDataSource} from '@shared/components/ui/table/table-data-source';
 import {ButtonComponent} from '@shared/components/ui/button/button.component';
+import {AdvancedTableComponent} from '@shared/components/ui/table/advanced-table.component';
 
 @Component({
   selector: 'app-account-table',
-  standalone: true,
-  imports: [DataTableComponent, ButtonComponent],
+  imports: [
+    AdvancedTableComponent,
+    ColumnDefDirective,
+    CellDefDirective,
+    HeaderCellDefDirective,
+    ActionCellDefDirective,
+    ButtonComponent,
+  ],
   templateUrl: './account-table.component.html',
-  styleUrl: './account-table.component.css'
+  styleUrls: ['./account-table.component.css'],
 })
-export class AccountTableComponent {
-  @ViewChild(DataTableComponent) dataTableComponent?: DataTableComponent;
+export class AccountTableComponent implements OnDestroy {
+  @ViewChild(AdvancedTableComponent) table?: AdvancedTableComponent<AccountApiResponse>;
 
   @Output() editAccount = new EventEmitter<AccountApiResponse>();
   @Output() toggleStatus = new EventEmitter<AccountApiResponse>();
@@ -28,113 +44,100 @@ export class AccountTableComponent {
   private readonly accountService = inject(AccountService);
   private readonly router = inject(Router);
 
-  protected readonly tableConfig: DataTableConfig<AccountApiResponse> = {
-    columns: [
-      {
-        key: 'accountNumber',
-        label: 'Número de Cuenta',
-        sortable: true,
-        width: '150px'
-      },
-      {
-        key: 'accountType',
-        label: 'Tipo',
-        sortable: true,
-        width: '120px',
-        pipe: (value) => AccountTypeHelper.getLabel(value)
-      },
-      {
-        key: 'initialBalance',
-        label: 'Saldo Inicial',
-        sortable: true,
-        width: '130px',
-        pipe: (value: number) => this.formatCurrency(value)
-      },
-      {
-        key: 'currentBalance',
-        label: 'Saldo Actual',
-        sortable: true,
-        width: '130px',
-        pipe: (value: number) => this.formatCurrency(value)
-      },
-      {
-        key: 'status',
-        label: 'Estado',
-        sortable: true,
-        width: '100px',
-        pipe: (value) => AccountStatusHelper.getLabel(value)
-      },
-      {
-        key: 'customerName',
-        label: 'Cliente ID',
-        sortable: false,
-        width: '100px'
-      }
-    ],
-    actions: [
-      {
-        label: 'Activar',
-        variant: 'success',
-        action: (account) => this.onToggle(account),
-        condition: (account) => !AccountStatusHelper.isActive(account.status)
-      },
-      {
-        label: 'Desactivar',
-        variant: 'warning',
-        action: (account) => this.onToggle(account),
-        condition: (account) => AccountStatusHelper.isActive(account.status)
-      }
-    ],
-    showSearch: true,
-    showPagination: true,
-    searchPlaceholder: 'Buscar por número de cuenta...',
-    pageSize: 10,
-    rowClickable: false
-  };
+  displayedColumns = [
+    'accountNumber',
+    'accountType',
+    'initialBalance',
+    'currentBalance',
+    'status',
+    'customerName',
+    'actions',
+  ];
 
-  protected readonly loadAccounts = (
-    params: DataTableParams
-  ): Observable<DataTableResponse<AccountApiResponse>> => {
+  dataSource: RemoteTableDataSource<AccountApiResponse>;
+
+  constructor() {
+    this.dataSource = new RemoteTableDataSource(
+      (query) => this.loadAccounts(query),
+      {
+        pageSize: 10,
+        searchDebounceTime: 400,
+        defaultSortBy: 'createdAt',
+        defaultSortDirection: 'DESC',
+      }
+    );
+  }
+
+  ngOnDestroy(): void {
+    this.dataSource.disconnect();
+  }
+
+  private loadAccounts(query: DataSourceQuery): Observable<PageResponse<AccountApiResponse>> {
     const filter: AccountFilter = {
-      page: params.page,
-      size: params.pageSize,
-      sortBy: params.sortBy || 'createdAt',
-      sortDirection: params.sortDirection
+      page: query.page,
+      size: query.pageSize,
+      sortBy: query.sortBy || 'createdAt',
+      sortDirection: query.sortDirection,
     };
 
-    const search = params.search?.trim();
+    const search = query.search?.trim();
     if (search) {
       filter.accountNumber = search;
     }
 
     return this.accountService.getAll(filter).pipe(
-      map(response => ({
-        content: response.content ?? [],
-        totalPages: response.totalPages ?? 1,
-        totalElements: response.totalElements ?? 0
-      }))
+      catchError((error) => {
+        console.error('Error loading accounts:', error);
+        return of(this.emptyResponse());
+      })
     );
-  };
+  }
 
-  protected onToggle(account: AccountApiResponse): void {
+  private emptyResponse(): PageResponse<AccountApiResponse> {
+    return {
+      content: [],
+      totalElements: 0,
+      totalPages: 0,
+      page: 0,
+      size: 10,
+      first: true,
+      last: true,
+      hasNext: false,
+      hasPrevious: false,
+    };
+  }
+
+  onToggle(account: AccountApiResponse): void {
     this.toggleStatus.emit(account);
   }
 
   refresh(): void {
-    this.dataTableComponent?.refresh();
+    this.dataSource.refresh();
   }
 
-  protected onCreateNew(): void {
+  onCreateNew(): void {
     this.router.navigate(['/accounts/new']);
   }
 
-  private formatCurrency(amount: number): string {
+  formatCurrency(amount: number): string {
     return new Intl.NumberFormat('es-EC', {
       style: 'currency',
       currency: 'USD',
       minimumFractionDigits: 2,
-      maximumFractionDigits: 2
+      maximumFractionDigits: 2,
     }).format(amount);
+  }
+
+  getAccountTypeLabel(type: AccountType): string {
+    return AccountTypeHelper.getLabel(type);
+  }
+
+  getAccountStatusLabel(status: AccountStatus): string {
+    return AccountStatusHelper.getLabel(status);
+  }
+
+  isAccountActive(status: AccountStatus): boolean {
+    return AccountStatusHelper.isActive(status);
   }
 
 }
