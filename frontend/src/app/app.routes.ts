@@ -67,6 +67,13 @@ export const routes: Routes = [
             (m) => m.TransactionFormPage
           )
       },
+      {
+        path: 'reports',
+        loadComponent: () =>
+          import('./core/features/reports/pages/report-list/report-list.page').then(
+            (m) => m.ReportListPage
+          )
+      }
     ]
   }
 ];

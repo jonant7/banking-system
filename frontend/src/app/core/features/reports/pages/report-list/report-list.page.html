@@ -1,0 +1,208 @@
+<div class="report-list-page">
+  <div class="page-header">
+    <div>
+      <h2 class="page-title">Reportes</h2>
+      <p class="page-subtitle">Genera reportes de estado de cuenta de tus clientes</p>
+    </div>
+  </div>
+
+  <app-card>
+    <div class="report-form">
+      <h3 class="section-title">Generar Reporte de Estado de Cuenta</h3>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">Cliente *</label>
+          <app-select
+            [options]="customerOptions()"
+            placeholder="Seleccione un cliente"
+            [disabled]="loading()"
+            [(ngModel)]="selectedCustomerId"
+            (ngModelChange)="onCustomerChange($event)"
+          />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Fecha Inicial *</label>
+          <input
+            type="datetime-local"
+            class="date-input"
+            [value]="startDate()"
+            (change)="startDate.set($any($event.target).value)"
+            [disabled]="!selectedCustomerId() || loading()"
+          />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Fecha Final *</label>
+          <input
+            type="datetime-local"
+            class="date-input"
+            [value]="endDate()"
+            (change)="endDate.set($any($event.target).value)"
+            [disabled]="!selectedCustomerId() || loading()"
+          />
+        </div>
+      </div>
+
+      @if (selectedCustomer()) {
+        <div class="customer-info">
+          <div class="info-row">
+            <span class="info-label">Cliente:</span>
+            <span class="info-value">{{ selectedCustomer()!.name }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Identificación:</span>
+            <span class="info-value">{{ selectedCustomer()!.identification }}</span>
+          </div>
+          @if (selectedCustomer()!.phone) {
+            <div class="info-row">
+              <span class="info-label">Teléfono:</span>
+              <span class="info-value">{{ selectedCustomer()!.phone }}</span>
+            </div>
+          }
+        </div>
+      }
+
+      <div class="form-actions">
+        <app-button
+          variant="primary"
+          (clicked)="generateReport()"
+          [loading]="loading()"
+          [disabled]="!canGenerateReport() || loading()">
+          Generar Reporte
+        </app-button>
+
+        <app-button
+          variant="secondary"
+          (clicked)="generateAndDownloadReport()"
+          [loading]="loading()"
+          [disabled]="!canGenerateReport() || loading()">
+          Generar y Descargar PDF
+        </app-button>
+      </div>
+    </div>
+  </app-card>
+
+  @if (reportData()) {
+    <app-card>
+      <div class="report-result">
+        <div class="result-header">
+          <h3 class="section-title">Resultado del Reporte</h3>
+
+          <div class="result-actions">
+            @if (reportData()!.pdfBase64) {
+              <app-button
+                variant="outline"
+                size="sm"
+                (clicked)="downloadPdf()">
+                Descargar PDF
+              </app-button>
+
+              <app-button
+                variant="outline"
+                size="sm"
+                (clicked)="openPdfInNewTab()">
+                Abrir PDF
+              </app-button>
+            }
+          </div>
+        </div>
+
+        <div class="report-summary">
+          <div class="summary-grid">
+            <div class="summary-item">
+              <span class="summary-label">Cliente:</span>
+              <span class="summary-value">{{ reportData()!.customerName }}</span>
+            </div>
+
+            <div class="summary-item">
+              <span class="summary-label">Período:</span>
+              <span class="summary-value">
+                {{ formatDate(reportData()!.startDate) }} - {{ formatDate(reportData()!.endDate) }}
+              </span>
+            </div>
+
+            <div class="summary-item">
+              <span class="summary-label">Total de Cuentas:</span>
+              <span class="summary-value">{{ reportData()!.accounts.length }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="accounts-section">
+          <h4 class="subsection-title">Detalle de Cuentas</h4>
+
+          @for (account of reportData()!.accounts; track account.account.accountNumber) {
+            <div class="account-card">
+              <div class="account-header">
+                <div class="account-title">
+                  <span class="account-number">{{ account.account.accountNumber }}</span>
+                  <app-badge [variant]="account.account.status == accountStatus.ACTIVE ? 'success' : 'danger'">
+                    {{ account.account.status == accountStatus.ACTIVE ? 'Activa' : 'Inactiva' }}
+                  </app-badge>
+                </div>
+                <div class="account-type">{{ getAccountTypeLabel(account.account.accountType) }}</div>
+              </div>
+
+              <div class="account-balances">
+                <div class="balance-item">
+                  <span class="balance-label">Saldo Inicial:</span>
+                  <span class="balance-value">{{ formatCurrency(account.account.initialBalance) }}</span>
+                </div>
+                <div class="balance-item highlight">
+                  <span class="balance-label">Saldo Final:</span>
+                  <span class="balance-value final">{{ formatCurrency(account.account.currentBalance) }}</span>
+                </div>
+              </div>
+
+              @if (account.transactions.length > 0) {
+                <div class="transactions-section">
+                  <div class="transactions-header">
+                    <span class="transactions-title">Transacciones ({{ account.transactions.length }})</span>
+                  </div>
+
+                  <div class="transactions-list">
+                    @for (transaction of account.transactions; track transaction.id) {
+                      <div class="transaction-item">
+                        <div class="transaction-date">
+                          {{ formatDateTime(transaction.createdAt) }}
+                        </div>
+                        <div class="transaction-type">
+                          <app-badge [variant]="getTypeBadgeVariant(transaction.type)">
+                            {{ getTransactionTypeLabel(transaction.type) }}
+                          </app-badge>
+                        </div>
+                        <div class="transaction-amount">
+                          <app-badge [variant]="getAmountBadgeVariant(transaction.amount)">
+                            {{ formatCurrency(transaction.amount) }}
+                          </app-badge>
+                        </div>
+                        <div class="transaction-balance">
+                          Saldo: {{ formatCurrency(transaction.balanceAfter) }}
+                        </div>
+                        @if (transaction.reference) {
+                          <div class="transaction-reference">
+                            {{ transaction.reference }}
+                          </div>
+                        }
+                      </div>
+                    }
+                  </div>
+                </div>
+              } @else {
+                <div class="no-transactions">
+                  No hay transacciones en el período seleccionado
+                </div>
+              }
+            </div>
+          } @empty {
+            <div class="no-accounts">
+              El cliente no tiene cuentas registradas
+            </div>
+          }
+        </div>
+      </div>
+    </app-card>
+  }
+</div>
