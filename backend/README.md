@@ -275,6 +275,43 @@ curl http://localhost:8081/actuator/health/rabbit
 curl http://localhost:8081/actuator/metrics
 ```
 
+## 🔌 API Endpoints
+
+### Customer Service (http://localhost:8081/api/v1)
+
+**Customers:**
+
+- `POST /customers` - Create customer
+- `GET /customers` - List customers (paginated, filterable)
+- `GET /customers/{id}` - Get customer by ID
+- `PUT /customers/{id}` - Update customer
+- `PATCH /customers/{id}` - Partial update
+- `PATCH /customers/{id}/activate` - Activate customer
+- `PATCH /customers/{id}/deactivate` - Deactivate customer
+
+### Account Service (http://localhost:8082/api/v1)
+
+**Accounts:**
+
+- `POST /accounts` - Create account
+- `GET /accounts` - List accounts (paginated, filterable)
+- `GET /accounts/{id}` - Get account by ID
+- `GET /accounts/number/{accountNumber}` - Get by account number
+- `PATCH /accounts/{id}/activate` - Activate account
+- `PATCH /accounts/{id}/deactivate` - Deactivate account
+
+**Transactions:**
+
+- `POST /accounts/{accountId}/transactions` - Execute transaction
+- `GET /accounts/{accountId}/transactions` - List transactions (paginated)
+- `GET /accounts/{accountId}/transactions/report` - Transactions by date range
+- `GET /accounts/transactions/{transactionId}` - Get transaction by ID
+
+**Reports:**
+
+- `GET /reports?customerId={id}&startDate={date}&endDate={date}` - Account statement (JSON)
+- `GET /reports/pdf?customerId={id}&startDate={date}&endDate={date}` - Account statement (PDF)
+
 ---
 
 **Built with ☕ Java 21 | 🍃 Spring Boot 3.5 | 🐘 PostgreSQL 17 | 🐰 RabbitMQ 3.13**
