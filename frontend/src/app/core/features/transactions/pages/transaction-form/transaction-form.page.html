@@ -1,0 +1,151 @@
+<div class="transaction-form-page">
+  <div class="page-header">
+    <h2 class="page-title">Nueva Transacción</h2>
+  </div>
+
+  <app-card>
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="transaction-form">
+
+      <div class="form-section">
+        <h3 class="section-title">Información de la Transacción</h3>
+
+        <div class="form-row">
+          <app-form-field
+            label="Cuenta"
+            [required]="true"
+            [error]="getFieldError('accountId')">
+            <app-select
+              formControlName="accountId"
+              [options]="accountOptions()"
+              placeholder="Seleccione la cuenta"
+              [disabled]="isAccountLocked()"
+            />
+          </app-form-field>
+
+          <app-form-field
+            label="Tipo de Transacción"
+            [required]="true"
+            [error]="getFieldError('type')">
+            <app-select
+              formControlName="type"
+              [options]="transactionTypeOptions"
+              placeholder="Seleccione el tipo"
+            />
+          </app-form-field>
+        </div>
+
+        <div class="form-row">
+          <app-form-field
+            label="Monto"
+            [required]="true"
+            [error]="getFieldError('amount')">
+            <app-input
+              formControlName="amount"
+              placeholder="Ingrese el monto"
+              type="number"
+              step="0.01"
+              min="0.01"
+            />
+
+            @if (insufficientBalance()) {
+              <div class="field-hint error">
+                ⚠️ Saldo insuficiente. Disponible: {{ formatCurrency(currentBalance()) }}
+              </div>
+            }
+          </app-form-field>
+
+          <app-form-field
+            label="Referencia (Opcional)"
+            [error]="getFieldError('reference')">
+            <app-input
+              formControlName="reference"
+              placeholder="Ej: Pago de servicios"
+              type="text"
+              maxlength="200"
+            />
+          </app-form-field>
+        </div>
+      </div>
+
+      @if (selectedAccount()) {
+        <div class="account-summary">
+          <h4 class="summary-title">Resumen de la Cuenta</h4>
+
+          <div class="summary-grid">
+            <div class="summary-item">
+              <span class="summary-label">Número de Cuenta:</span>
+              <span class="summary-value">{{ selectedAccount()!.accountNumber }}</span>
+            </div>
+
+            <div class="summary-item">
+              <span class="summary-label">Tipo:</span>
+              <span class="summary-value">{{ getAccountTypeLabel(selectedAccount()!.accountType) }}</span>
+            </div>
+
+            <div class="summary-item">
+              <span class="summary-label">Cliente:</span>
+              <span class="summary-value">{{ selectedAccount()!.customerName || 'N/A' }}</span>
+            </div>
+
+            <div class="summary-item highlight">
+              <span class="summary-label">Saldo Disponible:</span>
+              <span class="summary-value balance">{{ formatCurrency(selectedAccount()!.currentBalance) }}</span>
+            </div>
+          </div>
+
+          @if (form.get('amount')?.valid && selectedType()) {
+            <div class="transaction-preview">
+              <div class="preview-header">
+                <span>Vista Previa</span>
+              </div>
+              <div class="preview-content">
+                <div class="preview-row">
+                  <span class="preview-label">Operación:</span>
+                  <span
+                    class="preview-value"
+                    [class.text-success]="!isWithdrawal()"
+                    [class.text-error]="isWithdrawal()">
+                    {{ getTypeLabel(selectedType()!) }}
+                  </span>
+                </div>
+                <div class="preview-row">
+                  <span class="preview-label">Monto:</span>
+                  <span
+                    class="preview-value"
+                    [class.text-success]="!isWithdrawal()"
+                    [class.text-error]="isWithdrawal()">
+                    {{ isWithdrawal() ? '-' : '+' }}{{ formatCurrency(form.get('amount')?.value || 0) }}
+                  </span>
+                </div>
+                <div class="preview-row highlight">
+                  <span class="preview-label">Nuevo Saldo:</span>
+                  <span class="preview-value balance">
+                    {{ formatCurrency(newBalance()) }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      }
+
+      <div class="form-actions">
+        <app-button
+          type="button"
+          variant="outline"
+          (clicked)="onCancel()"
+          [disabled]="loading()">
+          Cancelar
+        </app-button>
+
+        <app-button
+          type="submit"
+          variant="primary"
+          [loading]="loading()"
+          [disabled]="form.invalid || loading() || insufficientBalance()">
+          Realizar Transacción
+        </app-button>
+      </div>
+    </form>
+  </app-card>
+</div>
