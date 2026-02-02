@@ -1,0 +1,91 @@
+<div class="transaction-list-page">
+  <div class="page-header">
+    <div>
+      <h2 class="page-title">Transacciones</h2>
+      <p class="page-subtitle">Consulta y gestiona las transacciones de las cuentas</p>
+    </div>
+  </div>
+
+  <app-card>
+    <div class="filters-section">
+      <h3 class="section-title">Filtros</h3>
+
+      <div class="filters-grid">
+        <div class="filter-group">
+          <label class="filter-label">Cuenta *</label>
+          <app-select
+            [options]="accountOptions()"
+            placeholder="Seleccione una cuenta"
+            [disabled]="loading()"
+            [(ngModel)]="selectedAccountId"
+            (ngModelChange)="onAccountChange($event)"
+          />
+        </div>
+
+        <div class="filter-group">
+          <label class="filter-label">Fecha Inicial (Opcional)</label>
+          <input
+            type="datetime-local"
+            class="date-input"
+            [value]="startDate()"
+            (change)="startDate.set($any($event.target).value)"
+            [disabled]="!selectedAccountId() || loading()"
+          />
+        </div>
+
+        <div class="filter-group">
+          <label class="filter-label">Fecha Final (Opcional)</label>
+          <input
+            type="datetime-local"
+            class="date-input"
+            [value]="endDate()"
+            (change)="endDate.set($any($event.target).value)"
+            [disabled]="!selectedAccountId() || loading()"
+          />
+        </div>
+
+        <div class="filter-actions">
+          <app-button
+            variant="secondary"
+            (clicked)="applyDateFilter()"
+            [disabled]="!startDate() || !endDate() || loading()">
+            Aplicar Fechas
+          </app-button>
+
+          @if (hasDateFilter()) {
+            <app-button
+              variant="outline"
+              (clicked)="clearDateFilter()">
+              Limpiar Fechas
+            </app-button>
+          }
+        </div>
+      </div>
+
+      @if (selectedAccount()) {
+        <div class="account-info">
+          <div class="info-row">
+            <span class="info-label">Cuenta:</span>
+            <span class="info-value">{{ selectedAccount()!.accountNumber }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Tipo:</span>
+            <span class="info-value">{{ selectedAccount()!.accountType }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Saldo Disponible:</span>
+            <span class="info-value balance">{{ formatCurrency(selectedAccount()!.currentBalance) }}</span>
+          </div>
+        </div>
+      }
+    </div>
+  </app-card>
+
+  @if (selectedAccountId()) {
+    <app-transaction-table
+      [accountId]="selectedAccountId()"
+      [startDate]="appliedStartDate()"
+      [endDate]="appliedEndDate()"
+    />
+  }
+</div>
