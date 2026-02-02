@@ -1,0 +1,56 @@
+<div class="pagination">
+  @if (showPageInfo) {
+    <div class="pagination-info">
+      Mostrando {{ startItem }} - {{ endItem }} de {{ totalElements }}
+    </div>
+  }
+
+  <div class="pagination-controls">
+    <button
+      class="pagination-button"
+      [disabled]="!canGoPrevious"
+      (click)="goToPrevious()"
+      type="button">
+      Anterior
+    </button>
+
+    @for (page of pages; track $index) {
+      @if (page === null) {
+        <span class="pagination-ellipsis">...</span>
+      } @else {
+        <button
+          class="pagination-button"
+          [class.active]="page === currentPage"
+          (click)="goToPage(page)"
+          type="button">
+          {{ page + 1 }}
+        </button>
+      }
+    }
+
+    <button
+      class="pagination-button"
+      [disabled]="!canGoNext"
+      (click)="goToNext()"
+      type="button">
+      Siguiente
+    </button>
+  </div>
+
+  @if (showPageSizeOptions) {
+    <div class="page-size-selector">
+      <label for="page-size-select" class="page-size-label">
+        Por página:
+      </label>
+      <select
+        id="page-size-select"
+        class="page-size-select"
+        [ngModel]="pageSize"
+        (ngModelChange)="changePageSize($event)">
+        @for (option of pageSizeOptions; track option) {
+          <option [value]="option">{{ option }}</option>
+        }
+      </select>
+    </div>
+  }
+</div>

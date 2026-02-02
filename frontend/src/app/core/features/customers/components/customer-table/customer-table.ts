@@ -1,119 +1,105 @@
-import {Component, EventEmitter, inject, Output, ViewChild} from '@angular/core';
-import {Observable} from 'rxjs';
-import {map} from 'rxjs/operators';
+import {Component, EventEmitter, inject, OnDestroy, Output, ViewChild} from '@angular/core';
+import {Router} from '@angular/router';
+import {Observable, of} from 'rxjs';
+import {catchError} from 'rxjs/operators';
 import {CustomerApiResponse, CustomerFilter} from '@core/models/customer';
 import {CustomerService} from '@core/services/customer.service';
-import {
-  DataTableComponent,
-  DataTableConfig,
-  DataTableParams,
-  DataTableResponse
-} from '@shared/components/ui/data-table/data-table.component';
+import {PageResponse} from '@core/models';
+import {DataSourceQuery, RemoteTableDataSource} from '@shared/components/ui/table/table-data-source';
 import {ButtonComponent} from '@shared/components/ui/button/button.component';
-import {Router} from '@angular/router';
+import {AdvancedTableComponent} from '@shared/components/ui/table/advanced-table.component';
+import {
+  ActionCellDefDirective,
+  CellDefDirective,
+  ColumnDefDirective,
+  HeaderCellDefDirective
+} from '@shared/components/ui/table/table-column.directives';
 
 @Component({
   selector: 'app-customer-table',
-  standalone: true,
-  imports: [DataTableComponent, ButtonComponent],
+  imports: [
+    ButtonComponent,
+    AdvancedTableComponent,
+    ColumnDefDirective,
+    HeaderCellDefDirective,
+    CellDefDirective,
+    ActionCellDefDirective,
+  ],
   templateUrl: './customer-table.html',
-  styleUrl: './customer-table.css'
+  styleUrls: ['./customer-table.css'],
 })
-export class CustomerTable {
-  @ViewChild(DataTableComponent) dataTableComponent?: DataTableComponent;
+export class CustomerTable implements OnDestroy {
+  @ViewChild(AdvancedTableComponent) table?: AdvancedTableComponent<CustomerApiResponse>;
 
   @Output() editCustomer = new EventEmitter<CustomerApiResponse>();
   @Output() toggleStatus = new EventEmitter<CustomerApiResponse>();
 
-  private customerService = inject(CustomerService);
-  private router = inject(Router);
+  private readonly customerService = inject(CustomerService);
+  private readonly router = inject(Router);
 
-  tableConfig: DataTableConfig<CustomerApiResponse> = {
-    columns: [
+  displayedColumns = [
+    'customerId',
+    'fullName',
+    'identification',
+    'address',
+    'phone',
+    'status',
+    'actions',
+  ];
+
+  dataSource: RemoteTableDataSource<CustomerApiResponse>;
+
+  constructor() {
+    this.dataSource = new RemoteTableDataSource(
+      (query) => this.loadCustomers(query),
       {
-        key: 'customerId',
-        label: 'ID',
-        sortable: true,
-        width: '80px'
-      },
-      {
-        key: 'fullName',
-        label: 'Nombre',
-        sortable: true
-      },
-      {
-        key: 'identification',
-        label: 'Identificación',
-        sortable: true
-      },
-      {
-        key: 'address',
-        label: 'Dirección',
-        sortable: false
-      },
-      {
-        key: 'phone',
-        label: 'Teléfono',
-        sortable: false
-      },
-      {
-        key: 'status',
-        label: 'Estado',
-        sortable: true,
-        pipe: (value: boolean) => value ? 'Activo' : 'Inactivo'
+        pageSize: 10,
+        searchDebounceTime: 400,
+        defaultSortBy: 'createdAt',
+        defaultSortDirection: 'DESC',
       }
-    ],
-    actions: [
-      {
-        label: 'Editar',
-        variant: 'primary',
-        action: (customer) => this.onEdit(customer)
-      },
-      {
-        label: 'Activar',
-        variant: 'success',
-        action: (customer) => this.onToggle(customer),
-        condition: (customer) => !customer.status
-      },
-      {
-        label: 'Desactivar',
-        variant: 'warning',
-        action: (customer) => this.onToggle(customer),
-        condition: (customer) => customer.status
-      }
-    ],
-    showSearch: true,
-    showPagination: true,
-    searchPlaceholder: 'Buscar por nombre o identificación ...',
-    pageSize: 10,
-    rowClickable: false
-  };
+    );
+  }
 
-  loadCustomers = (
-    params: DataTableParams
-  ): Observable<DataTableResponse<CustomerApiResponse>> => {
+  ngOnDestroy(): void {
+    this.dataSource.disconnect();
+  }
 
+  private loadCustomers(query: DataSourceQuery): Observable<PageResponse<CustomerApiResponse>> {
     const filter: CustomerFilter = {
-      page: params.page,
-      size: params.pageSize,
-      sortBy: params.sortBy || 'createdAt',
-      sortDirection: params.sortDirection
+      page: query.page,
+      size: query.pageSize,
+      sortBy: query.sortBy || 'createdAt',
+      sortDirection: query.sortDirection,
     };
 
-    const search = params.search?.trim();
+    const search = query.search?.trim();
     if (search) {
       filter.name = search;
       filter.identification = search;
     }
 
     return this.customerService.getAll(filter).pipe(
-      map(response => ({
-        content: response.content ?? [],
-        totalPages: response.totalPages ?? 1,
-        totalElements: response.totalElements ?? 0
-      }))
+      catchError((error) => {
+        console.error('Error loading customers:', error);
+        return of(this.emptyResponse(query));
+      })
     );
-  };
+  }
+
+  private emptyResponse(query: DataSourceQuery): PageResponse<CustomerApiResponse> {
+    return {
+      content: [],
+      totalElements: 0,
+      totalPages: 0,
+      page: query.page,
+      size: query.pageSize,
+      first: true,
+      last: true,
+      hasNext: false,
+      hasPrevious: false,
+    };
+  }
 
   onEdit(customer: CustomerApiResponse): void {
     this.editCustomer.emit(customer);
@@ -124,11 +110,19 @@ export class CustomerTable {
   }
 
   refresh(): void {
-    this.dataTableComponent?.refresh();
+    this.dataSource.refresh();
   }
 
   onCreateNew(): void {
     this.router.navigate(['/customers/new']);
+  }
+
+  getStatusLabel(status: boolean): string {
+    return status ? 'Activo' : 'Inactivo';
+  }
+
+  isActive(status: boolean): boolean {
+    return status;
   }
 
 }
