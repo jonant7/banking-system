@@ -132,14 +132,51 @@ docker compose exec customer-db psql -U postgres -d customer_db
 docker compose exec account-db psql -U postgres -d account_db
 ```
 
-## 🗄️ Database
+## 🗄️ Database Management with Flyway
 
-Each service has its own PostgreSQL database with automated Flyway migrations:
+**No manual SQL execution required!** All database schemas, tables, and data structures are automatically managed by Flyway migrations.
+
+### How It Works
+
+Each service includes Flyway for automatic database versioning:
 
 - **customer_db** (Port 5432): Customer and person entities
 - **account_db** (Port 5433): Account and transaction entities
 
-Schema changes are version-controlled in `src/main/resources/db/migration/`.
+### Migration Process
+
+When services start, Flyway automatically:
+1. Creates the database schema if it doesn't exist
+2. Runs all pending migration scripts in version order
+3. Tracks executed migrations in `flyway_schema_history` table
+4. Ensures database is always in sync with application code
+
+### Migration Files Location
+
+All migrations are version-controlled SQL scripts:
+```
+backend/customer-service/src/main/resources/db/migration/
+backend/account-service/src/main/resources/db/migration/
+```
+
+### Key Benefits
+
+✅ **Zero manual setup**: No need to run SQL scripts manually  
+✅ **Version control**: Database changes tracked in Git  
+✅ **Repeatable**: Same migrations across all environments  
+✅ **Rollback safe**: Database state is consistent and traceable  
+✅ **Team collaboration**: No conflicts with schema changes  
+
+### Viewing Migration Status
+```bash
+# Check migration history in customer database
+docker compose exec customer-db psql -U postgres -d customer_db \
+  -c "SELECT version, description, installed_on FROM flyway_schema_history;"
+
+# Check migration history in account database
+docker compose exec account-db psql -U postgres -d account_db \
+  -c "SELECT version, description, installed_on FROM flyway_schema_history;"
+```
 
 ---
 
